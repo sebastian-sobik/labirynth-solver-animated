@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>labirynth-solver-animated</title>
+</head>
+<body>
+    <main>
+        <div class="grid">
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+
+              <!-- wall | start | end | wrong | good | curr-position -->
+
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+        </div>
+        <aside>
+            <form action="#">
+                <p>
+                    <input type="radio" name="edit-mode" id="draw">
+                    <input type="radio" name="edit-mode" id="delete">
+                </p>
+                <p>
+                    <input type="radio" name="fill-mode" id="start">
+                    <input type="radio" name="fill-mode" id="end">
+                    <input type="radio" name="fill-mode" id="wall">
+                </p>
+                <p>
+                    <select name="x" id="x-axis">
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option selected value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                    <select name="y" id="y-axis">
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option selected value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </p>
+            </form>
+        </aside>
+    </main>
+</body>
+</html>
