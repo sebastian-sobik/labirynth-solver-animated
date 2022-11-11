@@ -5,20 +5,38 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>labirynth-solver-animated</title>
+    <link rel="stylesheet" href="./scss/style.css">
 </head>
 <body>
     <main>
         <div class="grid">
+            <!-- wall | start | end | wrong | good | curr-position -->
             <div class="grid-element"></div>
             <div class="grid-element"></div>
             <div class="grid-element"></div>
-
-              <!-- wall | start | end | wrong | good | curr-position -->
-
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+            <!-- wall | start | end | wrong | good | curr-position -->
             <div class="grid-element"></div>
             <div class="grid-element"></div>
             <div class="grid-element"></div>
-
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+            <!-- wall | start | end | wrong | good | curr-position -->
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+            <!-- wall | start | end | wrong | good | curr-position -->
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
+            <!-- wall | start | end | wrong | good | curr-position -->
+            <div class="grid-element"></div>
+            <div class="grid-element"></div>
             <div class="grid-element"></div>
             <div class="grid-element"></div>
             <div class="grid-element"></div>
@@ -26,20 +44,25 @@
         <aside>
             <form action="#">
                 <p>
+                    <label for="draw">Draw</label>
                     <input type="radio" name="edit-mode" id="draw">
+                    <label for="delete">Delete</label>
                     <input type="radio" name="edit-mode" id="delete">
                 </p>
                 <p>
-                    <input type="radio" name="fill-mode" id="start">
-                    <input type="radio" name="fill-mode" id="end">
+                    <label for="wall">Wall</label>
                     <input type="radio" name="fill-mode" id="wall">
+                    <label for="start">Start</label>
+                    <input type="radio" name="fill-mode" id="start">
+                    <label for="end">End</label>
+                    <input type="radio" name="fill-mode" id="end">
                 </p>
-                <p>
+                <p class="axis">
                     <select name="x" id="x-axis">
                         <option value="2">2</option>
                         <option value="3">3</option>
-                        <option selected value="4">4</option>
-                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option selected value="5">5</option>
                         <option value="6">6</option>
                         <option value="7">7</option>
                         <option value="8">8</option>
@@ -49,8 +72,8 @@
                     <select name="y" id="y-axis">
                         <option value="2">2</option>
                         <option value="3">3</option>
-                        <option selected value="4">4</option>
-                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option selected value="5">5</option>
                         <option value="6">6</option>
                         <option value="7">7</option>
                         <option value="8">8</option>
@@ -61,5 +84,6 @@
             </form>
         </aside>
     </main>
+    <script src="./app.js"></script>
 </body>
 </html>
