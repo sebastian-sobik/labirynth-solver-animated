@@ -4,54 +4,26 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>labirynth-solver-animated</title>
+    <title>labirynth-solver</title>
     <link rel="stylesheet" href="./scss/style.css">
 </head>
 <body>
     <main>
         <div class="grid">
-            <!-- wall | start | end | wrong | good | curr-position -->
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <!-- wall | start | end | wrong | good | curr-position -->
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <!-- wall | start | end | wrong | good | curr-position -->
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <!-- wall | start | end | wrong | good | curr-position -->
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <!-- wall | start | end | wrong | good | curr-position -->
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
-            <div class="grid-element"></div>
+            <!-- wall | start | end | wrong-way | good-way | curr-position -->
+            <!-- grid-element -->
         </div>
         <aside>
-            <form action="#">
+            <form action="#" autocomplete="off">
                 <p>
                     <label for="draw">Draw</label>
-                    <input type="radio" name="edit-mode" id="draw">
+                    <input type="radio" name="edit-mode" id="draw" checked>
                     <label for="delete">Delete</label>
                     <input type="radio" name="edit-mode" id="delete">
                 </p>
                 <p>
                     <label for="wall">Wall</label>
-                    <input type="radio" name="fill-mode" id="wall">
+                    <input type="radio" name="fill-mode" id="wall" checked>
                     <label for="start">Start</label>
                     <input type="radio" name="fill-mode" id="start">
                     <label for="end">End</label>
