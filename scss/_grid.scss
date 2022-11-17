@@ -17,8 +17,16 @@ $grid-axis-length : 700px;
 
 
 .grid-element {
-    border: 1px solid rgb(236, 236, 236);
+    border: 1px solid rgb(197, 196, 196);
     transition: 200ms ease background-color;
 }
+
+.start { background-color: #4B19F9;}
+.end { background-color: #6f1a3b;}
+.wall { background-color: #898989;}
+.wrong-way { background-color: #CB3971}
+.good-way { background-color: #2AD899}
+.unidentifed-way {background-color: #ffdab4e8;}
+.curr-position { background-color: #d18e4b}
 
 
