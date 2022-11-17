@@ -44,7 +44,7 @@ document.querySelector(".axis").addEventListener("change", function(e){
     numBoxes = numRows*numCols;
 })
 
-fixElementsQuantity(0, numBoxes);
+//fixElementsQuantity(0, numBoxes);
 
 
 // ==== Cursor ====
@@ -97,6 +97,49 @@ function ifCrossedBounds(direction, cursor) {
     return true;
 }
 
+// ==== Labirynth parser ====
+
+class Node {
+    constructor(up, down, left, right) {
+        this.up = up;
+        this.down = down;
+        this.left = left;
+        this.right = right;
+    }
+
+    Up() {return this.up}
+    Down() {return this.down}
+    Left() {return this.left}
+    Right() {return this.right}
+}
+
+function createArray(rows, cols) {
+    const arr = [];
+    for (let index = 0; index < rows; index++) {
+        arr.push(new Array(cols));
+    }
+    return arr;
+}
+
+function parseBlockToSymbol(block) {
+    if(block.classList.contains("start")) return 's';
+    if(block.classList.contains("end")) return 'e';
+    if(block.classList.contains("wall")) return '#';
+    else return '.';
+}
+
+function labToString() {
+    const grid = document.querySelector(".grid");
+    const map = createArray(numRows, numCols);
+    for (let i = 0; i < grid.children.length ; i++) {
+         const symbol = parseBlockToSymbol(grid.children[i]);
+         const x = i%(numCols);
+         const y = Math.floor(i/numCols)
+         map[y][x] = symbol;
+    }
+    return map;
+}
+
 
 // ==== Testing part ====
 
@@ -111,3 +154,13 @@ document.addEventListener("keydown", (e) => {
     setPathColor(grid_el, clr);
     setTimeout(()=>{grid_el.style.backgroundColor=''},1000);
 })
+
+function printMap(map) {
+    for (const row of map) {
+            let r = "";
+            for (let index = 0; index < row.length; index++) {
+                r+=row[index] + " ";
+            }
+            console.log(r);
+        }
+}
