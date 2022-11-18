@@ -21,7 +21,6 @@ function calcChildIndex(cursor) {
     return y * numCols + x;
 }
 
-
 // ==== GET / SET ====
 
 function setPathColor(grid_element, clr) {
@@ -35,7 +34,6 @@ function getGridElement(index) {
 function getValFromMap({col_idx : x, row_idx : y}, map) {
     return map[y][x];
 }
-
 
 // ==== Validation ====
 
