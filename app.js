@@ -2,6 +2,162 @@ let numBoxes = 25;
 let numRows = 5;
 let numCols = 5;
 
+// ==== Cursor ====
+
+let cursor = {col_idx: 0, row_idx: 0};
+
+function moveCursor(direction = '', cursor = undefined) {
+    if(cursor == undefined || direction == '') return ;
+    if(direction == 'U') {cursor.row_idx -= 1};
+    if(direction == 'D') {cursor.row_idx += 1};
+    if(direction == 'L') {cursor.col_idx -= 1};
+    if(direction == 'R') {cursor.col_idx += 1};
+}
+
+function calcChildIndex(cursor) {
+    const {col_idx : x, row_idx : y} = cursor;
+    if(x < 0 || x > (numCols-1)) return -1;
+    if(y < 0 || y > (numRows-1)) return -1;
+    return y * numCols + x;
+}
+
+
+// ==== GET / SET ====
+
+function setPathColor(grid_element, clr) {
+    grid_element.style.backgroundColor = clr;
+}
+
+function getGridElement(index) {
+    return document.querySelector(".grid").children[index];
+}
+
+function getValFromMap({col_idx : x, row_idx : y}, map) {
+    return map[y][x];
+}
+
+
+// ==== Validation ====
+
+function isCrossingBound(direction, cursor) {
+    const {col_idx : x, row_idx : y} = cursor;
+    if(direction == 'U' && (y - 1) >= 0) {return false};
+    if(direction == 'D' && (y + 1) < numRows) {return false};
+    if(direction == 'L' && (x - 1) >= 0) {return false};
+    if(direction == 'R' && (x + 1) < numCols) {return false};
+    return true;
+}
+
+// ==== Labirynth parser ====
+
+class Node {
+    constructor(up, down, left, right, symbol) {
+        this.up = up;
+        this.down = down;
+        this.left = left;
+        this.right = right;
+        this.symbol = symbol;
+    }
+
+    Up() {return this.up}
+    Down() {return this.down}
+    Left() {return this.left}
+    Right() {return this.right}
+    Symbol() {return this.symbol}
+}
+
+function create2DArray(rows, cols) {
+    const arr = [];
+    for (let index = 0; index < rows; index++) {
+        arr.push(new Array(cols));
+    }
+    return arr;
+}
+
+function parseBlockToSymbol(block) {
+    if(block.classList.contains("start")) return 's';
+    if(block.classList.contains("end")) return 'e';
+    if(block.classList.contains("wall")) return '#';
+    else return '.';
+}
+
+function labToString() {
+    const grid = document.querySelector(".grid");
+    const map = create2DArray(numRows, numCols);
+    for (let i = 0; i < grid.children.length ; i++) {
+         const symbol = parseBlockToSymbol(grid.children[i]);
+         const x = i%(numCols);
+         const y = Math.floor(i/numCols)
+         map[y][x] = symbol;
+    }
+    return map;
+}
+
+function createNode(cursor = undefined, map = undefined) {
+    if(!cursor && !map) return -1;
+    return new Node(...['U', 'D', 'L', 'R', ''].map(direction => {
+        let _cursor = {...cursor};
+        if(isCrossingBound(direction, _cursor) && direction != ''){return '#'}
+        moveCursor(direction, _cursor);
+
+        return getValFromMap(_cursor, map);
+    }));
+}
+
+function mapToNodeMap(map) {
+    const nodeMap = create2DArray(numRows, numCols);
+    const cursor = {col_idx: 0, row_idx: 0};
+
+    for (const row of map) {
+        for (const col of map) {
+            nodeMap[cursor.row_idx][cursor.col_idx] = createNode(cursor, map);
+            cursor.col_idx++;
+        }
+        cursor.row_idx++;
+        cursor.col_idx = 0;
+    }
+    return nodeMap;
+}
+
+const nodeMap = mapToNodeMap(labToString());
+
+
+// ==== Testing part ====
+
+const clr = "#BABDFE";
+
+function getDirection(key) {
+    if(key == "ArrowUp") return 'U';
+    if(key == "ArrowDown") return 'D';
+    if(key == "ArrowLeft") return 'L';
+    if(key == "ArrowRight") return 'R';
+    return '';
+}
+
+document.addEventListener("keydown", (e) => {
+    const direction = getDirection(e.key);
+    if(!isCrossingBound(direction, cursor)) {
+        move__Valid__Cursor(direction, cursor);
+    }
+    const grid_el  = getGridElement(calcChildIndex(cursor));
+    setPathColor(grid_el, clr);
+    setTimeout(()=>{grid_el.style.backgroundColor=''},1000);
+})
+
+function printMap(map) {
+    for (const row of map) {
+            let r = "";
+            for (let index = 0; index < row.length; index++) {
+                r+=row[index] + " ";
+            }
+            console.log(r);
+        }
+}
+
+
+// ==== Maintaining grid size ====
+
+
 function fixElementsQuantity(numBefore, numNow) {
     const difference = numBefore - numNow;
     if(difference < 0) //adding
@@ -46,121 +202,3 @@ document.querySelector(".axis").addEventListener("change", function(e){
 
 //fixElementsQuantity(0, numBoxes);
 
-
-// ==== Cursor ====
-
-let cursor = {col_idx: 0, row_idx: 0}; // we established x,y distance before
-
-function move__Valid__Cursor(direction = '', cursor = undefined) {
-    if(cursor == undefined || direction == '') return ;
-    if(direction == 'U') {cursor.row_idx -= 1};
-    if(direction == 'D') {cursor.row_idx += 1};
-    if(direction == 'L') {cursor.col_idx -= 1};
-    if(direction == 'R') {cursor.col_idx += 1};
-}
-
-function calcChildIndex(cursor) {
-    const {col_idx : x, row_idx : y} = cursor;
-    if(x < 0 || x > (numCols-1)) return -1;
-    if(y < 0 || y > (numRows-1)) return -1;
-    return y * numCols + x;
-}
-
-
-// ==== GET / SET ====
-
-function setPathColor(grid_el, clr) {
-    grid_el.style.backgroundColor = clr;
-}
-
-function getGridElement(index) {
-    return document.querySelector(".grid").children[index];
-}
-
-
-// ==== Validation ====
-
-function getDirection(key) {
-    if(key == "ArrowUp") return 'U';
-    if(key == "ArrowDown") return 'D';
-    if(key == "ArrowLeft") return 'L';
-    if(key == "ArrowRight") return 'R';
-    return '';
-}
-
-function ifCrossedBounds(direction, cursor) {
-    const {col_idx : x, row_idx : y} = cursor;
-    if(direction == 'U' && (y - 1) >= 0) {return false};
-    if(direction == 'D' && (y + 1) < numRows) {return false};
-    if(direction == 'L' && (x - 1) >= 0) {return false};
-    if(direction == 'R' && (x + 1) < numCols) {return false};
-    return true;
-}
-
-// ==== Labirynth parser ====
-
-class Node {
-    constructor(up, down, left, right) {
-        this.up = up;
-        this.down = down;
-        this.left = left;
-        this.right = right;
-    }
-
-    Up() {return this.up}
-    Down() {return this.down}
-    Left() {return this.left}
-    Right() {return this.right}
-}
-
-function createArray(rows, cols) {
-    const arr = [];
-    for (let index = 0; index < rows; index++) {
-        arr.push(new Array(cols));
-    }
-    return arr;
-}
-
-function parseBlockToSymbol(block) {
-    if(block.classList.contains("start")) return 's';
-    if(block.classList.contains("end")) return 'e';
-    if(block.classList.contains("wall")) return '#';
-    else return '.';
-}
-
-function labToString() {
-    const grid = document.querySelector(".grid");
-    const map = createArray(numRows, numCols);
-    for (let i = 0; i < grid.children.length ; i++) {
-         const symbol = parseBlockToSymbol(grid.children[i]);
-         const x = i%(numCols);
-         const y = Math.floor(i/numCols)
-         map[y][x] = symbol;
-    }
-    return map;
-}
-
-
-// ==== Testing part ====
-
-const clr = "#BABDFE";
-
-document.addEventListener("keydown", (e) => {
-    const direction = getDirection(e.key);
-    if(!ifCrossedBounds(direction, cursor)) {
-        move__Valid__Cursor(direction, cursor);
-    }
-    const grid_el  = getGridElement(calcChildIndex(cursor));
-    setPathColor(grid_el, clr);
-    setTimeout(()=>{grid_el.style.backgroundColor=''},1000);
-})
-
-function printMap(map) {
-    for (const row of map) {
-            let r = "";
-            for (let index = 0; index < row.length; index++) {
-                r+=row[index] + " ";
-            }
-            console.log(r);
-        }
-}
