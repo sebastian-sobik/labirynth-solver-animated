@@ -50,6 +50,13 @@ function isCrossingBound(direction, cursor) {
 
 // ==== Labirynth parser ====
 
+class Cursor {
+    constructor(x, y){
+        this.col_idx = x;
+        this.row_idx = y;
+    }
+}
+
 class Node {
     constructor(up, down, left, right, symbol) {
         this.up = up;
@@ -104,6 +111,15 @@ function createNode(cursor = undefined, map = undefined) {
     }));
 }
 
+function findStart(NodeMap) {
+    for (let row = 0; row < NodeMap.length; row++) {
+        for (let col = 0; col < NodeMap[row].length; col++) {
+            if(NodeMap[row][col].Symbol() == 's') return new Cursor(col, row)
+        }
+    }
+    return -1;
+}
+
 function mapToNodeMap(map) {
     const nodeMap = create2DArray(numRows, numCols);
     const cursor = {col_idx: 0, row_idx: 0};
@@ -119,7 +135,7 @@ function mapToNodeMap(map) {
     return nodeMap;
 }
 
-const nodeMap = mapToNodeMap(labToString());
+const NodeMap = mapToNodeMap(labToString());
 
 
 // ==== Testing part ====
