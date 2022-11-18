@@ -122,15 +122,10 @@ function findStart(NodeMap) {
 
 function mapToNodeMap(map) {
     const nodeMap = create2DArray(numRows, numCols);
-    const cursor = {col_idx: 0, row_idx: 0};
-
-    for (const row of map) {
-        for (const col of map) {
-            nodeMap[cursor.row_idx][cursor.col_idx] = createNode(cursor, map);
-            cursor.col_idx++;
+    for (let r = 0; r < numRows; r++) {
+        for (let c = 0; c < numCols; c++) {
+            nodeMap[r][c] = createNode({col_idx : c, row_idx : r}, map);
         }
-        cursor.row_idx++;
-        cursor.col_idx = 0;
     }
     return nodeMap;
 }
@@ -153,7 +148,7 @@ function getDirection(key) {
 document.addEventListener("keydown", (e) => {
     const direction = getDirection(e.key);
     if(!isCrossingBound(direction, cursor)) {
-        move__Valid__Cursor(direction, cursor);
+        moveCursor(direction, cursor);
     }
     const grid_el  = getGridElement(calcChildIndex(cursor));
     setPathColor(grid_el, clr);
