@@ -4,56 +4,39 @@ let numCols = 5;
 
 // ==== Cursor ====
 
-let cursor = {col_idx: 0, row_idx: 0};
+class Cursor {
+    constructor(x, y, nRows = 0, nCols = 0){
+        this.col_idx = x;
+        this.row_idx = y;
+        this.nRows = nRows;
+        this.nCols = nCols;
+        (nRows>0 && nCols>0) ? this.validate = true : this.validate = false;
+    }
+    offValidation() {this.validate = false}
+    onValidation() {this.validate = true}
+    move(direction = '') {
+        if(direction == '') return 1;
+        if(this.isInvalidMove(direction)) return 0;
 
-function moveCursor(direction = '', cursor = undefined) {
-    if(cursor == undefined || direction == '') return ;
-    if(direction == 'U') {cursor.row_idx -= 1};
-    if(direction == 'D') {cursor.row_idx += 1};
-    if(direction == 'L') {cursor.col_idx -= 1};
-    if(direction == 'R') {cursor.col_idx += 1};
-}
-
-function calcChildIndex(cursor) {
-    const {col_idx : x, row_idx : y} = cursor;
-    if(x < 0 || x > (numCols-1)) return -1;
-    if(y < 0 || y > (numRows-1)) return -1;
-    return y * numCols + x;
-}
-
-// ==== GET / SET ====
-
-function setPathColor(grid_element, clr) {
-    grid_element.style.backgroundColor = clr;
-}
-
-function getGridElement(index) {
-    return document.querySelector(".grid").children[index];
-}
-
-function getValFromMap({col_idx : x, row_idx : y}, map) {
-    return map[y][x];
-}
-
-// ==== Validation ====
-
-function isCrossingBound(direction, cursor) {
-    const {col_idx : x, row_idx : y} = cursor;
-    if(direction == 'U' && (y - 1) >= 0) {return false};
-    if(direction == 'D' && (y + 1) < numRows) {return false};
-    if(direction == 'L' && (x - 1) >= 0) {return false};
-    if(direction == 'R' && (x + 1) < numCols) {return false};
-    return true;
+        if(direction == 'U') {this.row_idx -= 1};
+        if(direction == 'D') {this.row_idx += 1};
+        if(direction == 'L') {this.col_idx -= 1};
+        if(direction == 'R') {this.col_idx += 1};
+        return 1;
+    }
+    isInvalidMove(direction) {
+        const {col_idx : x, row_idx : y} = this;
+        if(!this.validate) return false;
+        if(direction == 'U' && (y - 1) >= 0) {return false};
+        if(direction == 'D' && (y + 1) < this.nRows) {return false};
+        if(direction == 'L' && (x - 1) >= 0) {return false};
+        if(direction == 'R' && (x + 1) < this.nCols) {return false};
+        return true;
+    }
+    compare(c) {return this.col_idx == c.col_idx && this.row_idx == c.row_idx;}
 }
 
 // ==== Labirynth parser ====
-
-class Cursor {
-    constructor(x, y){
-        this.col_idx = x;
-        this.row_idx = y;
-    }
-}
 
 class Node {
     constructor(up, down, left, right, symbol) {
@@ -98,70 +81,67 @@ function labToString() {
     return map;
 }
 
-function createNode(cursor = undefined, map = undefined) {
-    if(!cursor && !map) return -1;
-    return new Node(...['U', 'D', 'L', 'R', ''].map(direction => {
-        let _cursor = {...cursor};
-        if(isCrossingBound(direction, _cursor) && direction != ''){return '#'}
-        moveCursor(direction, _cursor);
+// * is it possible to skip copying cursor to _cursor that many times?
 
-        return getValFromMap(_cursor, map);
+function createNode(cursor = undefined, map = undefined) {
+    if(!cursor && !map)  return -1;
+    return new Node(...['U', 'D', 'L', 'R', ''].map(direction => {
+        const _cursor = Object.assign(Object.create(Object.getPrototypeOf(cursor)), cursor);
+        if(_cursor.move(direction)) return getValFromMap(_cursor, map);
+        else return '#';
     }));
 }
 
-function findStart(NodeMap) {
-    for (let row = 0; row < NodeMap.length; row++) {
-        for (let col = 0; col < NodeMap[row].length; col++) {
-            if(NodeMap[row][col].Symbol() == 's') return new Cursor(col, row)
-        }
-    }
-    return -1;
-}
+// function findStart(NodeMap) {
+//     for (let row = 0; row < NodeMap.length; row++) {
+//         for (let col = 0; col < NodeMap[row].length; col++) {
+//             if(NodeMap[row][col].Symbol() == 's') return new Cursor(col, row)
+//         }
+//     }
+//     return -1;
+// }
 
 function mapToNodeMap(map) {
     const nodeMap = create2DArray(numRows, numCols);
     for (let r = 0; r < numRows; r++) {
         for (let c = 0; c < numCols; c++) {
-            nodeMap[r][c] = createNode({col_idx : c, row_idx : r}, map);
+            nodeMap[r][c] = createNode(new Cursor(c,r,numRows,numCols), map);
         }
     }
     return nodeMap;
 }
 
+// ==== GET / SET ====
+
+function setPathColor(grid_element, clr) {
+    grid_element.style.backgroundColor = clr;
+}
+
+function getGridElement(index) {
+    return document.querySelector(".grid").children[index];
+}
+
+function getValFromMap({col_idx : x, row_idx : y}, map) {
+    return map[y][x];
+}
+
+function getChildIndex(cursor) {
+    const {col_idx : x, row_idx : y} = cursor;
+    if(x < 0 || x > (numCols-1)) return -1;
+    if(y < 0 || y > (numRows-1)) return -1;
+    return y * numCols + x;
+}
+
 const NodeMap = mapToNodeMap(labToString());
 
 
-// ==== Testing part ====
 
-const clr = "#BABDFE";
 
-function getDirection(key) {
-    if(key == "ArrowUp") return 'U';
-    if(key == "ArrowDown") return 'D';
-    if(key == "ArrowLeft") return 'L';
-    if(key == "ArrowRight") return 'R';
-    return '';
-}
 
-document.addEventListener("keydown", (e) => {
-    const direction = getDirection(e.key);
-    if(!isCrossingBound(direction, cursor)) {
-        moveCursor(direction, cursor);
-    }
-    const grid_el  = getGridElement(calcChildIndex(cursor));
-    setPathColor(grid_el, clr);
-    setTimeout(()=>{grid_el.style.backgroundColor=''},1000);
-})
 
-function printMap(map) {
-    for (const row of map) {
-            let r = "";
-            for (let index = 0; index < row.length; index++) {
-                r+=row[index] + " ";
-            }
-            console.log(r);
-        }
-}
+
+
+
 
 
 // ==== Maintaining grid size ====
