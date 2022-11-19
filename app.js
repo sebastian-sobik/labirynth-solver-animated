@@ -1,3 +1,4 @@
+// ==== Testing ====
 let numBoxes = 25;
 let numRows = 5;
 let numCols = 5;
@@ -47,11 +48,11 @@ class Node {
         this.symbol = symbol;
     }
 
-    Up() {return this.up}
-    Down() {return this.down}
-    Left() {return this.left}
-    Right() {return this.right}
-    Symbol() {return this.symbol}
+    U() {return this.up}
+    D() {return this.down}
+    L() {return this.left}
+    R() {return this.right}
+    S() {return this.symbol}
 }
 
 function create2DArray(rows, cols) {
@@ -92,24 +93,54 @@ function createNode(cursor = undefined, map = undefined) {
     }));
 }
 
-// function findStart(NodeMap) {
-//     for (let row = 0; row < NodeMap.length; row++) {
-//         for (let col = 0; col < NodeMap[row].length; col++) {
-//             if(NodeMap[row][col].Symbol() == 's') return new Cursor(col, row)
-//         }
-//     }
-//     return -1;
-// }
-
 function mapToNodeMap(map) {
     const nodeMap = create2DArray(numRows, numCols);
+    let start;
     for (let r = 0; r < numRows; r++) {
         for (let c = 0; c < numCols; c++) {
-            nodeMap[r][c] = createNode(new Cursor(c,r,numRows,numCols), map);
+            const Node = createNode(new Cursor(c,r,numRows,numCols), map)
+            nodeMap[r][c] = Node;
+            if(Node.S()=='s') start = new Cursor(c,r);
         }
     }
-    return nodeMap;
+    return {nodeMap: nodeMap, cursor: start};
 }
+
+
+class Labirynth {
+    constructor(map) {
+        const {nodeMap, cursor} = mapToNodeMap(map);
+        this.nodeMap = nodeMap;
+        this.startCursor = cursor;
+        this.mapCursor = new Cursor(0,0);
+    }
+
+    searchPath(j_cursor = undefined, came_from = '', other_j_cursors = []) {
+        if(j_cursor == undefined) return 0;
+        const paths = [];
+        const node = this.getNode(j_cursor);
+        const ways = this.possibleWays.call(null, came_from, node);
+        
+        return paths;
+    }
+
+
+    possibleWays(came_from, node){
+        return(['R', 'L', 'U', 'D'].filter(dir=>{
+            if(dir === came_from) return false;
+            const next_block_symbol = node[dir]();
+            if(next_block_symbol === '#' || next_block_symbol === 's') return false;
+        }))
+    }
+
+    getNode({col_idx : x, row_idx : y}) {return this.nodeMap[y][x];};
+}
+
+
+
+
+
+
 
 // ==== GET / SET ====
 
@@ -132,8 +163,9 @@ function getChildIndex(cursor) {
     return y * numCols + x;
 }
 
-const NodeMap = mapToNodeMap(labToString());
+// const NodeMap = mapToNodeMap(labToString());
 
+const lab = new Labirynth(labToString());
 
 
 
