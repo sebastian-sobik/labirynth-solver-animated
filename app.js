@@ -173,8 +173,46 @@ class Labirynth {
     }
 }
 
+// === Customising map ===
+
+let isClicking = false;
+let startEl = {row_idx: 4, col_idx: 0};
+let endEl = {row_idx: 1, col_idx: 4};
 
 
+const init = () => {
+    function clearStyle(e){
+        e.target.classList.remove('wall','start', 'end');
+    }
+    function addStyle(e, className="") {
+        clearStyle(e);
+        if(className) e.target.classList.add(className);
+    }
+
+    function drawStyle(e) {
+        const form = document.querySelector('form');
+        if(form.elements.delete.checked) clearStyle(e);
+        else if(form.elements.start.checked) {
+            clearStyle(getGridElement(startEl))
+        }
+
+        if(form.elements.start.checked) clearStyle(getGridElement(startEl));
+        if(form.elements.end.checked) clearStyle(getGridElement(endEl));
+        else form.elements["fill-mode"].forEach(el => {if(el.checked) addStyle(e, el.id);});
+    }
+    ["touchstart", "mousedown"].forEach(x => document.addEventListener(x, ()=>{isClicking = true;}));
+    ["touchend", "mouseup"].forEach(x => document.addEventListener(x, ()=>{isClicking = false;}));
+
+    ["mouseover", "mouseout"].forEach(x => document.querySelector('.grid').addEventListener(x, e=>{
+        if(!isClicking) return;
+        drawStyle(e);
+    }))
+    document.querySelector('.grid').addEventListener("mousedown", (e)=>{
+        drawStyle(e);
+    });
+}
+
+window.onload = init;
 
 
 
