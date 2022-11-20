@@ -115,25 +115,62 @@ class Labirynth {
         this.mapCursor = new Cursor(0,0);
     }
 
-    searchPath(j_cursor = undefined, came_from = '', other_j_cursors = []) {
-        if(j_cursor == undefined) return 0;
-        const paths = [];
-        const node = this.getNode(j_cursor);
-        const ways = this.possibleWays.call(null, came_from, node);
-        
+    searchPath(cursor = undefined, came_from = '', other_j_cursors = []) {
+        if(cursor == undefined) return 0;
+        let paths = [];
+        let end = {end: ''};
+        let path = "";
+
+        while(1){
+            const node = this.getNode(cursor);
+            const ways = this.possibleWays.call(null, came_from, node, end);
+            if(end.end) {path += end.end; return [path];}
+
+            if(ways.length > 1) {// junction
+               other_j_cursors.push(cursor);
+               ways.forEach(dir => {
+                    const _cursor = Object.assign(Object.create(Object.getPrototypeOf(cursor)), cursor);
+                    const _other_j = Object.assign(Object.create(Object.getPrototypeOf(other_j_cursors)), other_j_cursors);
+                    _cursor.move(dir);
+                    let new_paths = this.searchPath(_cursor, this.oppositeMove(dir), _other_j);
+                    new_paths.forEach(new_path => paths.push(path + dir + new_path));
+               });
+               break;
+            }
+            else if (ways.length === 1) {
+                cursor.move(ways[0])
+                came_from = this.oppositeMove(ways[0]);
+                path += ways[0];
+            }
+            else if (ways.length === 0) {paths = []; break;}
+            if(other_j_cursors.some(j_cur => {
+                return cursor.compare(j_cur);
+            })) {paths = []; break;}
+        }
+
+        //robi ruch
         return paths;
     }
 
 
-    possibleWays(came_from, node){
+    possibleWays(came_from, node, end){
         return(['R', 'L', 'U', 'D'].filter(dir=>{
             if(dir === came_from) return false;
             const next_block_symbol = node[dir]();
+            if(next_block_symbol === 'e') end.end = dir;
             if(next_block_symbol === '#' || next_block_symbol === 's') return false;
+            return true;
         }))
     }
 
     getNode({col_idx : x, row_idx : y}) {return this.nodeMap[y][x];};
+
+    oppositeMove(d) {
+        if(d === 'U') return 'D';
+        if(d === 'D') return 'U';
+        if(d === 'L') return 'R';
+        if(d === 'R') return 'L';
+    }
 }
 
 
