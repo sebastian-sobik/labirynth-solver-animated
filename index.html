@@ -12,16 +12,45 @@
         <div class="grid">
             <!-- wall | start | end | wrong-way | good-way | curr-position -->
             <!-- grid-element -->
+            <div class="grid-element "></div>
+            <div class="grid-element "></div>
+            <div class="grid-element "></div>
+            <div class="grid-element wall"></div>
+            <div class="grid-element "></div>
+
+            <div class="grid-element start"></div>
+            <div class="grid-element wall"></div>
+            <div class="grid-element "></div>
+            <div class="grid-element wall"></div>
+            <div class="grid-element wall"></div>
+
+            <div class="grid-element "></div>
+            <div class="grid-element "></div>
+            <div class="grid-element "></div>
+            <div class="grid-element "></div>
+            <div class="grid-element "></div>
+
+            <div class="grid-element wall"></div>
+            <div class="grid-element wall"></div>
+            <div class="grid-element"></div>
+            <div class="grid-element wall"></div>
+            <div class="grid-element "></div>
+
+            <div class="grid-element "></div>
+            <div class="grid-element wall"></div>
+            <div class="grid-element "></div>
+            <div class="grid-element end"></div>
+            <div class="grid-element "></div>
         </div>
         <aside>
             <form action="#" autocomplete="off">
-                <p>
+                <p class="edit-mode">
                     <label for="draw">Draw</label>
                     <input type="radio" name="edit-mode" id="draw" checked>
                     <label for="delete">Delete</label>
                     <input type="radio" name="edit-mode" id="delete">
                 </p>
-                <p>
+                <p class="fill-mode">
                     <label for="wall">Wall</label>
                     <input type="radio" name="fill-mode" id="wall" checked>
                     <label for="start">Start</label>
@@ -40,6 +69,9 @@
                         <option value="8">8</option>
                         <option value="9">9</option>
                         <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="40">60</option>
+                        <option value="60">60</option>
                     </select>
                     <select name="y" id="y-axis">
                         <option value="2">2</option>
@@ -51,6 +83,10 @@
                         <option value="8">8</option>
                         <option value="9">9</option>
                         <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="40">60</option>
+                        <option value="60">60</option>
+
                     </select>
                 </p>
             </form>

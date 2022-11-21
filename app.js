@@ -23,6 +23,7 @@ class Cursor {
         if(direction == 'D') {this.row_idx += 1};
         if(direction == 'L') {this.col_idx -= 1};
         if(direction == 'R') {this.col_idx += 1};
+
         return 1;
     }
     isInvalidMove(direction) {
@@ -108,6 +109,7 @@ function mapToNodeMap(map) {
 }
 
 
+
 class Labirynth {
     constructor(map) {
         const {nodeMap, cursor} = mapToNodeMap(map);
@@ -123,6 +125,10 @@ class Labirynth {
         let path = "";
 
         while(1){
+            if(other_j_cursors.some(j_cur => {
+                return cursor.compare(j_cur);
+            })) {paths = []; break;}
+
             const node = this.getNode(cursor);
             const ways = this.possibleWays.call(null, came_from, node, end);
             if(end.end) {path += end.end; return [path];}
@@ -144,9 +150,6 @@ class Labirynth {
                 path += ways[0];
             }
             else if (ways.length === 0) {paths = []; break;}
-            if(other_j_cursors.some(j_cur => {
-                return cursor.compare(j_cur);
-            })) {paths = []; break;}
         }
 
         //robi ruch
@@ -235,10 +238,6 @@ window.onload = init;
 
 // ==== GET / SET ====
 
-function setPathColor(grid_element, clr) {
-    grid_element.style.backgroundColor = clr;
-}
-
 function getGridElement(index) {
     return document.querySelector(".grid").children[index];
 }
@@ -308,4 +307,24 @@ document.querySelector(".axis").addEventListener("change", function(e){
     numBoxes = numRows*numCols;
 })
 
-//fixElementsQuantity(0, numBoxes);
+
+// ==== Testing ====
+
+function setPathColor(grid_element, clr) {
+    grid_element.style.backgroundColor = clr;
+}
+
+function displayPath(path = "") {
+    const _cursor = Object.assign(Object.create(Object.getPrototypeOf(lab.startCursor)), lab.startCursor);
+    for(let i = 0; i < path.length - 1; i++){
+        _cursor.move(path[i]);
+        const dom_el = getGridElement(getChildIndex(_cursor));
+        setTimeout(setPathColor.bind(null, dom_el, "#ffb703"), i*200);
+    }
+}
+
+/**
+let lab = new Labirynth(labToString());
+paths = lab.searchPath(lab.startCursor)
+displayPath()
+ */
