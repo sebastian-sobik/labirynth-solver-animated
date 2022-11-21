@@ -71,6 +71,7 @@ function parseBlockToSymbol(block) {
 }
 
 function labToString() {
+    if(!startEl || !endEl) return -1;
     const grid = document.querySelector(".grid");
     const map = create2DArray(numRows, numCols);
     for (let i = 0; i < grid.children.length ; i++) {
@@ -176,40 +177,55 @@ class Labirynth {
 // === Customising map ===
 
 let isClicking = false;
-let startEl = {row_idx: 4, col_idx: 0};
-let endEl = {row_idx: 1, col_idx: 4};
+let startEl = document.querySelector('.start');
+let endEl = document.querySelector('.end');
+let curr_fill_mode = "wall";
+let curr_draw_mode = "draw";
+
 
 
 const init = () => {
-    function clearStyle(e){
-        e.target.classList.remove('wall','start', 'end');
-    }
-    function addStyle(e, className="") {
-        clearStyle(e);
-        if(className) e.target.classList.add(className);
+
+    function clearStyle(e){if(!e)return;checkIfStartEnd(e);e.classList.remove('wall','start', 'end');}
+    function addStyle(e, className="") {clearStyle(e);if(className) e.classList.add(className);}
+    function checkIfStartEnd(e) {
+        if(e){
+            if(e.classList.contains('start')) {startEl = null;}
+            else if(e.classList.contains('end')) {endEl = null;}
+        }
     }
 
     function drawStyle(e) {
-        const form = document.querySelector('form');
-        if(form.elements.delete.checked) clearStyle(e);
-        else if(form.elements.start.checked) {
-            clearStyle(getGridElement(startEl))
+        if(curr_fill_mode === "start") {
+            clearStyle(startEl);
+            startEl = e;
         }
-
-        if(form.elements.start.checked) clearStyle(getGridElement(startEl));
-        if(form.elements.end.checked) clearStyle(getGridElement(endEl));
-        else form.elements["fill-mode"].forEach(el => {if(el.checked) addStyle(e, el.id);});
+        else if(curr_fill_mode === "end") {
+            clearStyle(endEl);
+            endEl = e;
+        }
+        else{
+            clearStyle(e);
+        }
+        addStyle(e, curr_fill_mode);
     }
+
+
     ["touchstart", "mousedown"].forEach(x => document.addEventListener(x, ()=>{isClicking = true;}));
     ["touchend", "mouseup"].forEach(x => document.addEventListener(x, ()=>{isClicking = false;}));
-
     ["mouseover", "mouseout"].forEach(x => document.querySelector('.grid').addEventListener(x, e=>{
-        if(!isClicking) return;
-        drawStyle(e);
+        if(!isClicking || curr_fill_mode === "start" || curr_fill_mode === "end") return;
+        if(curr_draw_mode === "delete") clearStyle(e.target);
+        else drawStyle(e.target);
     }))
+
     document.querySelector('.grid').addEventListener("mousedown", (e)=>{
-        drawStyle(e);
+        if(curr_draw_mode === "delete" || e.button === 2 ) clearStyle(e.target);
+        else drawStyle(e.target);
     });
+    document.querySelector('.grid').addEventListener("contextmenu", (e)=>{e.preventDefault()})
+    document.querySelector(".fill-mode").addEventListener("change", e => curr_fill_mode = e.target.id);
+    document.querySelector(".edit-mode").addEventListener("change", e => curr_draw_mode = e.target.id);
 }
 
 window.onload = init;
@@ -237,10 +253,6 @@ function getChildIndex(cursor) {
     if(y < 0 || y > (numRows-1)) return -1;
     return y * numCols + x;
 }
-
-// const NodeMap = mapToNodeMap(labToString());
-
-const lab = new Labirynth(labToString());
 
 
 
@@ -297,4 +309,3 @@ document.querySelector(".axis").addEventListener("change", function(e){
 })
 
 //fixElementsQuantity(0, numBoxes);
-
