@@ -1,0 +1,31 @@
+input[type="radio"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    margin: 0;
+
+    &:checked + label{
+        background-color : white;
+        color: black;
+    }
+  }
+
+.fill-mode {
+    position: absolute;
+    top: 50%;
+    left: 20%;
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+    transform: translate(0, -50%);
+
+  label {
+    display: inline-block;
+    position: relative;
+    border-radius: 1em;
+    padding: 1em 2.2em;
+    background-color: #6C6C6C;
+    color: #ACACAC;
+}
+
+}

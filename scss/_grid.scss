@@ -1,4 +1,4 @@
-$grid-axis-length : 700px;
+$grid-axis-length : 500px;
 
 :root {
     --rowNum : 5;
@@ -8,11 +8,14 @@ $grid-axis-length : 700px;
 .grid {
     width: $grid-axis-length;
     height: $grid-axis-length;
+    padding: 0.4em;
+    background-color: white;;
     border: 1px solid black;
+    border-radius: 0.3em;
 
     display: grid;
-    grid-template-columns: repeat(var(--colNum), 1fr);
     grid-template-rows:    repeat(var(--rowNum), 1fr);
+    grid-template-columns: repeat(var(--colNum), 1fr);
 }
 
 
