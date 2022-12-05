@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>labirynth-solver</title>
     <link rel="stylesheet" href="./scss/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <main>
@@ -51,15 +56,17 @@
                     <input type="radio" name="edit-mode" id="delete">
                 </p>
                 <p class="fill-mode">
-                    <label for="wall">Wall</label>
                     <input type="radio" name="fill-mode" id="wall" checked>
-                    <label for="start">Start</label>
+                    <label for="wall">Wall</label>
+                    <input type="radio" name="fill-mode" id="path">
+                    <label for="path">Path</label>
                     <input type="radio" name="fill-mode" id="start">
-                    <label for="end">End</label>
+                    <label for="start">Start</label>
                     <input type="radio" name="fill-mode" id="end">
+                    <label for="end">End</label>
                 </p>
                 <p class="axis">
-                    <select name="x" id="x-axis">
+                    <select name="size" id="size">
                         <option value="2">2</option>
                         <option value="3">3</option>
                         <option value="4">4</option>
@@ -70,28 +77,11 @@
                         <option value="9">9</option>
                         <option value="10">10</option>
                         <option value="20">20</option>
-                        <option value="40">60</option>
-                        <option value="60">60</option>
-                    </select>
-                    <select name="y" id="y-axis">
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option selected value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="40">60</option>
-                        <option value="60">60</option>
-
                     </select>
                 </p>
             </form>
         </aside>
     </main>
-    <script src="./app.js"></script>
+    <script src="./javascript/app.js" type="module"></script>
 </body>
 </html>

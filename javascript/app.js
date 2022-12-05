@@ -1,3 +1,5 @@
+import {pSBC} from "./colorGrader.js";
+
 // ==== Testing ====
 let numBoxes = 25;
 let numRows = 5;
@@ -291,18 +293,11 @@ function createGridElement(){
     return el;
 }
 
-document.querySelector(".axis").addEventListener("change", function(e){
-    const {name, value} = e.target;
-
-    if(name == "x") {
-        document.documentElement.style.setProperty("--colNum", value);
-        numCols = value;
-    }
-    else if (name == "y") {
-        document.documentElement.style.setProperty("--rowNum", value);
-        numRows = value;
-    }
-
+document.querySelector(".axis select").addEventListener("change", function(e){
+    const {value} = e.target;
+    console.log(value);
+    ["--colNum","--rowNum"].forEach(e=>document.documentElement.style.setProperty(e, value));
+    numRows = numCols = value;
     fixElementsQuantity(numBoxes, numRows*numCols);
     numBoxes = numRows*numCols;
 })
@@ -311,7 +306,12 @@ document.querySelector(".axis").addEventListener("change", function(e){
 // ==== Testing ====
 
 function setPathColor(grid_element, clr) {
-    grid_element.style.backgroundColor = clr;
+    const {backgroundColor} = grid_element.style;
+    if(backgroundColor)
+        grid_element.style.backgroundColor = pSBC(-0.2, backgroundColor);
+    else {
+        grid_element.style.backgroundColor = clr;
+    }
 }
 
 function displayPath(path = "") {
@@ -323,8 +323,8 @@ function displayPath(path = "") {
     }
 }
 
-/**
+
 let lab = new Labirynth(labToString());
-paths = lab.searchPath(lab.startCursor)
-displayPath()
- */
+let paths = lab.searchPath(lab.startCursor);
+displayPath(paths[0]);
+setTimeout(()=>displayPath(paths[0]), 2000);
