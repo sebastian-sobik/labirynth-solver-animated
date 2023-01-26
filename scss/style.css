@@ -70,6 +70,16 @@ aside {
   display: inline-block;
 }
 
+button, input[type=submit], input[type=reset] {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+
 :root {
   --rowNum: 5;
   --colNum: 5;
@@ -85,11 +95,13 @@ aside {
   display: grid;
   grid-template-rows: repeat(var(--rowNum), 1fr);
   grid-template-columns: repeat(var(--colNum), 1fr);
+  pointer-events: none;
 }
 
 .grid-element {
   border: 1px solid rgb(197, 196, 196);
   transition: 200ms ease background-color;
+  pointer-events: auto;
 }
 
 .start {
@@ -136,18 +148,55 @@ input[type=radio]:checked + label {
   position: absolute;
   top: 50%;
   left: 20%;
+  transform: translate(0, -50%);
   display: flex;
   gap: 15px;
   flex-direction: column;
-  transform: translate(0, -50%);
 }
 .fill-mode label {
   display: inline-block;
-  position: relative;
   border-radius: 1em;
   padding: 1em 2.2em;
   background-color: #6C6C6C;
   color: #ACACAC;
+}
+
+.edit-mode {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.edit-mode label {
+  padding: 10px;
+  border-radius: 100%;
+}
+.edit-mode label:first-of-type {
+  margin-right: 3rem;
+}
+
+.svg {
+  width: 20px;
+  height: 20px;
+}
+
+.run-btn {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 50px;
+  border-radius: 1em;
+  padding: 1em 3em;
+  background-color: white;
+  transition: 200ms background-color cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+.run-btn:hover {
+  background-color: #ffc300;
 }
 
 body {

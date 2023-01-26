@@ -50,10 +50,14 @@
         <aside>
             <form action="#" autocomplete="off">
                 <p class="edit-mode">
-                    <label for="draw">Draw</label>
                     <input type="radio" name="edit-mode" id="draw" checked>
-                    <label for="delete">Delete</label>
+                    <label for="draw">
+                        <img class="svg" src="./svg/pen.svg" alt="pen-icon">
+                    </label>
                     <input type="radio" name="edit-mode" id="delete">
+                    <label for="delete">
+                        <img class="svg" src="./svg/bin.svg" alt="bin-icon">
+                    </label>
                 </p>
                 <p class="fill-mode">
                     <input type="radio" name="fill-mode" id="wall" checked>
@@ -79,6 +83,7 @@
                         <option value="20">20</option>
                     </select>
                 </p>
+                <input type="button" class="run-btn">
             </form>
         </aside>
     </main>

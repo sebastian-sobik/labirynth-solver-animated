@@ -1,110 +1,58 @@
-import {pSBC} from "./colorGrader.js";
+import { Cursor } from "./Cursor.js";
+import { Node } from "./Node.js";
+import { create2DArray, parseBlockToSymbol, getGridElement, getValFromMap, setPathColor, removeOrangePath } from "./Utilities.js";
+import * as Grid from "./Grid.js";
 
 // ==== Testing ====
-let numBoxes = 25;
-let numRows = 5;
-let numCols = 5;
-
-// ==== Cursor ====
-
-class Cursor {
-    constructor(x, y, nRows = 0, nCols = 0){
-        this.col_idx = x;
-        this.row_idx = y;
-        this.nRows = nRows;
-        this.nCols = nCols;
-        (nRows>0 && nCols>0) ? this.validate = true : this.validate = false;
-    }
-    offValidation() {this.validate = false}
-    onValidation() {this.validate = true}
-    move(direction = '') {
-        if(direction == '') return 1;
-        if(this.isInvalidMove(direction)) return 0;
-
-        if(direction == 'U') {this.row_idx -= 1};
-        if(direction == 'D') {this.row_idx += 1};
-        if(direction == 'L') {this.col_idx -= 1};
-        if(direction == 'R') {this.col_idx += 1};
-
-        return 1;
-    }
-    isInvalidMove(direction) {
-        const {col_idx : x, row_idx : y} = this;
-        if(!this.validate) return false;
-        if(direction == 'U' && (y - 1) >= 0) {return false};
-        if(direction == 'D' && (y + 1) < this.nRows) {return false};
-        if(direction == 'L' && (x - 1) >= 0) {return false};
-        if(direction == 'R' && (x + 1) < this.nCols) {return false};
-        return true;
-    }
-    compare(c) {return this.col_idx == c.col_idx && this.row_idx == c.row_idx;}
-}
+let _NBOXES = 25;
+let _NROWS = 5;
+let _NCOLS = 5;
+let isClicking = false;
+let startElement = document.querySelector('.start');
+let endElement = document.querySelector('.end');
+let fill_mode = "wall";
+let draw_mode = "draw";
+let nothingChanged = false;
+let lab;
 
 // ==== Labirynth parser ====
-
-class Node {
-    constructor(up, down, left, right, symbol) {
-        this.up = up;
-        this.down = down;
-        this.left = left;
-        this.right = right;
-        this.symbol = symbol;
-    }
-
-    U() {return this.up}
-    D() {return this.down}
-    L() {return this.left}
-    R() {return this.right}
-    S() {return this.symbol}
-}
-
-function create2DArray(rows, cols) {
-    const arr = [];
-    for (let index = 0; index < rows; index++) {
-        arr.push(new Array(cols));
-    }
-    return arr;
-}
-
-function parseBlockToSymbol(block) {
-    if(block.classList.contains("start")) return 's';
-    if(block.classList.contains("end")) return 'e';
-    if(block.classList.contains("wall")) return '#';
-    else return '.';
-}
-
-function labToString() {
-    if(!startEl || !endEl) return -1;
-    const grid = document.querySelector(".grid");
-    const map = create2DArray(numRows, numCols);
-    for (let i = 0; i < grid.children.length ; i++) {
-         const symbol = parseBlockToSymbol(grid.children[i]);
-         const x = i%(numCols);
-         const y = Math.floor(i/numCols)
-         map[y][x] = symbol;
-    }
-    return map;
-}
-
-// * is it possible to skip copying cursor to _cursor that many times?
-
 function createNode(cursor = undefined, map = undefined) {
-    if(!cursor && !map)  return -1;
+    if(!cursor || !map)  return;
+    let _cursor = Object.create(Object.getPrototypeOf(cursor));
     return new Node(...['U', 'D', 'L', 'R', ''].map(direction => {
-        const _cursor = Object.assign(Object.create(Object.getPrototypeOf(cursor)), cursor);
+        Object.assign(_cursor, cursor);
         if(_cursor.move(direction)) return getValFromMap(_cursor, map);
         else return '#';
     }));
 }
 
-function mapToNodeMap(map) {
-    const nodeMap = create2DArray(numRows, numCols);
+// Drawn labirynth -> return : 2D arr of symbols
+function labToString() {
+    if(!startElement || !endElement) return;
+
+    const grid = document.querySelector(".grid");
+    const map = create2DArray(_NROWS, _NCOLS);
+    for (let i = 0; i < grid.children.length ; i++) {
+         const x = i % _NCOLS;
+         const y = Math.floor(i/_NCOLS)
+         map[y][x] = parseBlockToSymbol(grid.children[i]);
+    }
+    return map;
+}
+
+// Array of symbols -> return : 2D arr of nodes, cursor with start indexes
+function stringMapToNodeMap(map = undefined) {
+    if(!map) return;
+    const nodeMap = create2DArray(_NROWS, _NCOLS);
+
     let start;
-    for (let r = 0; r < numRows; r++) {
-        for (let c = 0; c < numCols; c++) {
-            const Node = createNode(new Cursor(c,r,numRows,numCols), map)
+    for (let r = 0; r < _NROWS; r++) {
+        for (let c = 0; c < _NCOLS; c++) {
+            const Node = createNode(new Cursor(c,r,_NROWS,_NCOLS), map);
             nodeMap[r][c] = Node;
-            if(Node.S()=='s') start = new Cursor(c,r);
+
+            if(Node.S()=='s')
+                start = new Cursor(c,r);
         }
     }
     return {nodeMap: nodeMap, cursor: start};
@@ -114,56 +62,62 @@ function mapToNodeMap(map) {
 
 class Labirynth {
     constructor(map) {
-        const {nodeMap, cursor} = mapToNodeMap(map);
+        const {nodeMap, cursor} = stringMapToNodeMap(map);
         this.nodeMap = nodeMap;
         this.startCursor = cursor;
         this.mapCursor = new Cursor(0,0);
     }
 
     searchPath(cursor = undefined, came_from = '', other_j_cursors = []) {
+
         if(cursor == undefined) return 0;
+
         let paths = [];
         let end = {end: ''};
         let path = "";
 
+        let global_cursor = Object.assign(Object.create(Object.getPrototypeOf(cursor)), cursor);
         while(1){
-            if(other_j_cursors.some(j_cur => {
-                return cursor.compare(j_cur);
-            })) {paths = []; break;}
 
-            const node = this.getNode(cursor);
+            if( other_j_cursors.some(j_cur => {return global_cursor.compare(j_cur)}) )
+                {paths = []; break;}
+
+            const node = this.getNode(global_cursor);
             const ways = this.possibleWays.call(null, came_from, node, end);
-            if(end.end) {path += end.end; return [path];}
+
+            if(end.end) return [path += end.end];
+            // if(end.end) {path += end.end; return [path]}
 
             if(ways.length > 1) {// junction
-               other_j_cursors.push(cursor);
-               ways.forEach(dir => {
-                    const _cursor = Object.assign(Object.create(Object.getPrototypeOf(cursor)), cursor);
+               other_j_cursors.push(global_cursor);
+               ways.forEach(direction => {
+                    const _cursor = Object.assign(Object.create(Object.getPrototypeOf(global_cursor)), global_cursor);
                     const _other_j = Object.assign(Object.create(Object.getPrototypeOf(other_j_cursors)), other_j_cursors);
-                    _cursor.move(dir);
-                    let new_paths = this.searchPath(_cursor, this.oppositeMove(dir), _other_j);
-                    new_paths.forEach(new_path => paths.push(path + dir + new_path));
+
+                    _cursor.move(direction);
+
+                    let new_paths = this.searchPath(_cursor, this.oppositeMove(direction), _other_j);
+                    new_paths.forEach(new_path => paths.push(path + direction + new_path));
                });
                break;
             }
             else if (ways.length === 1) {
-                cursor.move(ways[0])
+                global_cursor.move(ways[0])
                 came_from = this.oppositeMove(ways[0]);
                 path += ways[0];
             }
             else if (ways.length === 0) {paths = []; break;}
         }
-
-        //robi ruch
         return paths;
     }
 
 
     possibleWays(came_from, node, end){
-        return(['R', 'L', 'U', 'D'].filter(dir=>{
-            if(dir === came_from) return false;
-            const next_block_symbol = node[dir]();
-            if(next_block_symbol === 'e') end.end = dir;
+        return(['R', 'L', 'U', 'D'].filter( direction => {
+            if(direction === came_from) return false;
+
+            const next_block_symbol = node[direction]();
+            if(next_block_symbol === 'e') end.end = direction;
             if(next_block_symbol === '#' || next_block_symbol === 's') return false;
             return true;
         }))
@@ -172,147 +126,99 @@ class Labirynth {
     getNode({col_idx : x, row_idx : y}) {return this.nodeMap[y][x];};
 
     oppositeMove(d) {
-        if(d === 'U') return 'D';
-        if(d === 'D') return 'U';
-        if(d === 'L') return 'R';
-        if(d === 'R') return 'L';
+        if(d === 'U') return 'D'
+        else if(d === 'D') return 'U';
+        if(d === 'L') return 'R'
+        else if(d === 'R') return 'L';
     }
 }
-
-// === Customising map ===
-
-let isClicking = false;
-let startEl = document.querySelector('.start');
-let endEl = document.querySelector('.end');
-let curr_fill_mode = "wall";
-let curr_draw_mode = "draw";
-
 
 
 const init = () => {
 
-    function clearStyle(e){if(!e)return;checkIfStartEnd(e);e.classList.remove('wall','start', 'end');}
-    function addStyle(e, className="") {clearStyle(e);if(className) e.classList.add(className);}
-    function checkIfStartEnd(e) {
-        if(e){
-            if(e.classList.contains('start')) {startEl = null;}
-            else if(e.classList.contains('end')) {endEl = null;}
-        }
+    function clearStyle(e){
+        if(!e) return;
+
+        if(e.classList.contains('start')) {startElement = null;}
+        else if(e.classList.contains('end')) {endElement = null;}
+
+        e.classList.remove('wall','start', 'end');
     }
+
+    function addStyle(e, className="") {
+        clearStyle(e);
+        if(className)
+            e.classList.add(className);
+        }
+
 
     function drawStyle(e) {
-        if(curr_fill_mode === "start") {
-            clearStyle(startEl);
-            startEl = e;
+        if(fill_mode === "start") {
+            clearStyle(startElement);
+            startElement = e;
         }
-        else if(curr_fill_mode === "end") {
-            clearStyle(endEl);
-            endEl = e;
+        else if(fill_mode === "end") {
+            clearStyle(endElement);
+            endElement = e;
         }
-        else{
-            clearStyle(e);
-        }
-        addStyle(e, curr_fill_mode);
+
+        addStyle(e, fill_mode);
     }
 
 
-    ["touchstart", "mousedown"].forEach(x => document.addEventListener(x, ()=>{isClicking = true;}));
-    ["touchend", "mouseup"].forEach(x => document.addEventListener(x, ()=>{isClicking = false;}));
+    ["touchstart", "mousedown"].forEach(x => document.addEventListener(x, ()=>{  isClicking = true   }));
+    ["touchend", "mouseup"].forEach(x => document.addEventListener(x,     ()=>{  isClicking = false  }));
+
     ["mouseover", "mouseout"].forEach(x => document.querySelector('.grid').addEventListener(x, e=>{
-        if(!isClicking || curr_fill_mode === "start" || curr_fill_mode === "end") return;
-        if(curr_draw_mode === "delete") clearStyle(e.target);
+        if(!isClicking || fill_mode === "start" || fill_mode === "end") return;
+        if(draw_mode === "delete") clearStyle(e.target);
         else drawStyle(e.target);
     }))
 
     document.querySelector('.grid').addEventListener("mousedown", (e)=>{
-        if(curr_draw_mode === "delete" || e.button === 2 ) clearStyle(e.target);
+        if(nothingChanged) {nothingChanged = false; removeOrangePath();}
+        if(draw_mode === "delete" || e.button === 2 || fill_mode === "path") clearStyle(e.target);   //? Change
         else drawStyle(e.target);
     });
-    document.querySelector('.grid').addEventListener("contextmenu", (e)=>{e.preventDefault()})
-    document.querySelector(".fill-mode").addEventListener("change", e => curr_fill_mode = e.target.id);
-    document.querySelector(".edit-mode").addEventListener("change", e => curr_draw_mode = e.target.id);
+
+    document.querySelector(".fill-mode").addEventListener("change", e => fill_mode = e.target.id);
+    document.querySelector(".edit-mode").addEventListener("change", e => draw_mode = e.target.id);
+
+    document.querySelector('.grid').addEventListener("contextmenu", e => e.preventDefault());
+
+    document.querySelector(".axis select").addEventListener("change", function(e){
+        const {value} = e.target;
+        ["--colNum","--rowNum"].forEach(e=>document.documentElement.style.setProperty(e, value));
+        _NROWS = _NCOLS = value;
+        Grid.fixElementsQuantity(_NBOXES, _NROWS*_NCOLS);
+        _NBOXES = _NROWS*_NCOLS;
+    })
+
+    document.querySelector(".run-btn").addEventListener("click", (e)=>{
+        if(nothingChanged) {
+            removeOrangePath();
+            nothingChanged = false;
+            return;
+        }
+        lab = new Labirynth( labToString() );
+        let paths = lab.searchPath(lab.startCursor) || 0;
+
+        //Displaying fastest path!
+        if(!paths) return;
+
+        let path = paths.reduce(function(a, b) {
+            return a.length <= b.length ? a : b;
+          });
+
+        displayPath(path);
+        nothingChanged = true;
+    })
 }
 
 window.onload = init;
 
 
 
-
-// ==== GET / SET ====
-
-function getGridElement(index) {
-    return document.querySelector(".grid").children[index];
-}
-
-function getValFromMap({col_idx : x, row_idx : y}, map) {
-    return map[y][x];
-}
-
-function getChildIndex(cursor) {
-    const {col_idx : x, row_idx : y} = cursor;
-    if(x < 0 || x > (numCols-1)) return -1;
-    if(y < 0 || y > (numRows-1)) return -1;
-    return y * numCols + x;
-}
-
-
-
-
-
-
-
-
-
-
-// ==== Maintaining grid size ====
-
-
-function fixElementsQuantity(numBefore, numNow) {
-    const difference = numBefore - numNow;
-    if(difference < 0) //adding
-        addGridElements(-difference);
-    else if(difference > 0) //removing
-        removeGridElements(difference);
-}
-
-function addGridElements(num) {
-    const gridDOM = document.querySelector(".grid");
-    for (let index = 0; index < num; index++)
-        gridDOM.append(createGridElement());
-}
-
-function removeGridElements(num) {
-    const gridDOM = document.querySelector(".grid");
-    for (let index = 0; index < num; index++)
-        gridDOM.lastElementChild.remove();
-}
-
-function createGridElement(){
-    const el = document.createElement("div");
-    el.classList.add("grid-element");
-    return el;
-}
-
-document.querySelector(".axis select").addEventListener("change", function(e){
-    const {value} = e.target;
-    console.log(value);
-    ["--colNum","--rowNum"].forEach(e=>document.documentElement.style.setProperty(e, value));
-    numRows = numCols = value;
-    fixElementsQuantity(numBoxes, numRows*numCols);
-    numBoxes = numRows*numCols;
-})
-
-
-// ==== Testing ====
-
-function setPathColor(grid_element, clr) {
-    const {backgroundColor} = grid_element.style;
-    if(backgroundColor)
-        grid_element.style.backgroundColor = pSBC(-0.2, backgroundColor);
-    else {
-        grid_element.style.backgroundColor = clr;
-    }
-}
 
 function displayPath(path = "") {
     const _cursor = Object.assign(Object.create(Object.getPrototypeOf(lab.startCursor)), lab.startCursor);
@@ -323,8 +229,9 @@ function displayPath(path = "") {
     }
 }
 
-
-let lab = new Labirynth(labToString());
-let paths = lab.searchPath(lab.startCursor);
-displayPath(paths[0]);
-setTimeout(()=>displayPath(paths[0]), 2000);
+function getChildIndex(cursor) {
+    const {col_idx : x, row_idx : y} = cursor;
+    if(x < 0 || x > (_NCOLS-1)) return -1;
+    if(y < 0 || y > (_NROWS-1)) return -1;
+    return y * _NCOLS + x;
+}

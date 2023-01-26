@@ -1,3 +1,10 @@
+@mixin absolute($top, $left, $translateX : 0, $translateY : 0) {
+    position: absolute;
+    top: $top;
+    left: $left;
+    transform: translate($translateX, $translateY);
+}
+
 input[type="radio"] {
     -webkit-appearance: none;
     appearance: none;
@@ -10,22 +17,53 @@ input[type="radio"] {
     }
   }
 
+
 .fill-mode {
-    position: absolute;
-    top: 50%;
-    left: 20%;
+    @include absolute(50%, 20%, 0, -50%);
     display: flex;
     gap: 15px;
     flex-direction: column;
-    transform: translate(0, -50%);
 
   label {
     display: inline-block;
-    position: relative;
     border-radius: 1em;
     padding: 1em 2.2em;
     background-color: #6C6C6C;
     color: #ACACAC;
+    }
 }
 
+.edit-mode {
+    @include absolute(5%, 50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    label{
+        &:first-of-type{margin-right: 3rem;}
+        padding : 10px;
+        border-radius: 100%;
+    }
+}
+
+.svg {
+    width:20px;
+    height: 20px;
+}
+
+.run-btn {
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 50px;
+    border-radius: 1em;
+    padding: 1em 3em;
+
+    background-color: white;
+    transition:200ms background-color cubic-bezier(0.39, 0.575, 0.565, 1);
+
+    &:hover {
+        background-color: #ffc300;
+    }
 }
