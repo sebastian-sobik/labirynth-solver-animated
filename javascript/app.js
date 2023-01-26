@@ -3,15 +3,13 @@ import { Node } from "./Node.js";
 import { create2DArray, parseBlockToSymbol, getGridElement, getValFromMap, setPathColor, removeOrangePath } from "./Utilities.js";
 import * as Grid from "./Grid.js";
 
-// ==== Testing ====
-let _NBOXES = 25;
-let _NROWS = 5;
-let _NCOLS = 5;
+let _NROWS = 8;
+let _NCOLS = 8;
+let _NBOXES = _NROWS * _NCOLS;
 let isClicking = false;
 let startElement = document.querySelector('.start');
 let endElement = document.querySelector('.end');
 let fill_mode = "wall";
-let draw_mode = "draw";
 let nothingChanged = false;
 let lab;
 
@@ -171,18 +169,16 @@ const init = () => {
 
     ["mouseover", "mouseout"].forEach(x => document.querySelector('.grid').addEventListener(x, e=>{
         if(!isClicking || fill_mode === "start" || fill_mode === "end") return;
-        if(draw_mode === "delete") clearStyle(e.target);
         else drawStyle(e.target);
     }))
 
     document.querySelector('.grid').addEventListener("mousedown", (e)=>{
         if(nothingChanged) {nothingChanged = false; removeOrangePath();}
-        if(draw_mode === "delete" || e.button === 2 || fill_mode === "path") clearStyle(e.target);   //? Change
+        if(e.button === 2 || fill_mode === "path") clearStyle(e.target);   //? Change
         else drawStyle(e.target);
     });
 
     document.querySelector(".fill-mode").addEventListener("change", e => fill_mode = e.target.id);
-    document.querySelector(".edit-mode").addEventListener("change", e => draw_mode = e.target.id);
 
     document.querySelector('.grid').addEventListener("contextmenu", e => e.preventDefault());
 
@@ -194,18 +190,17 @@ const init = () => {
         _NBOXES = _NROWS*_NCOLS;
     })
 
-    document.querySelector(".run-btn").addEventListener("click", (e)=>{
+    document.querySelector(".run-btn").addEventListener("click", ()=>{
         if(nothingChanged) {
             removeOrangePath();
             nothingChanged = false;
             return;
         }
+
         lab = new Labirynth( labToString() );
-        let paths = lab.searchPath(lab.startCursor) || 0;
+        let paths = lab.searchPath(lab.startCursor);
 
-        //Displaying fastest path!
-        if(!paths) return;
-
+        if(paths.length === 0) return;
         let path = paths.reduce(function(a, b) {
             return a.length <= b.length ? a : b;
           });
@@ -225,7 +220,7 @@ function displayPath(path = "") {
     for(let i = 0; i < path.length - 1; i++){
         _cursor.move(path[i]);
         const dom_el = getGridElement(getChildIndex(_cursor));
-        setTimeout(setPathColor.bind(null, dom_el, "#ffb703"), i*200);
+        setTimeout(setPathColor.bind(null, dom_el, "#fdc843"), i*150);
     }
 }
 

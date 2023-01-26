@@ -81,8 +81,8 @@ button, input[type=submit], input[type=reset] {
 }
 
 :root {
-  --rowNum: 5;
-  --colNum: 5;
+  --rowNum: 8;
+  --colNum: 8;
 }
 
 .grid {
@@ -105,31 +105,15 @@ button, input[type=submit], input[type=reset] {
 }
 
 .start {
-  background-color: #4B19F9;
+  background-color: #2AD899;
 }
 
 .end {
-  background-color: #6f1a3b;
+  background-color: #b02e36;
 }
 
 .wall {
   background-color: #898989;
-}
-
-.wrong-way {
-  background-color: #CB3971;
-}
-
-.good-way {
-  background-color: #2AD899;
-}
-
-.unidentifed-way {
-  background-color: rgba(255, 218, 180, 0.9098039216);
-}
-
-.curr-position {
-  background-color: #d18e4b;
 }
 
 input[type=radio] {
@@ -141,7 +125,7 @@ input[type=radio] {
 }
 input[type=radio]:checked + label {
   background-color: white;
-  color: black;
+  color: #1d1d1d;
 }
 
 .fill-mode {
@@ -160,27 +144,8 @@ input[type=radio]:checked + label {
   background-color: #6C6C6C;
   color: #ACACAC;
 }
-
-.edit-mode {
-  position: absolute;
-  top: 5%;
-  left: 50%;
-  transform: translate(-50%, 0);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.edit-mode label {
-  padding: 10px;
-  border-radius: 100%;
-}
-.edit-mode label:first-of-type {
-  margin-right: 3rem;
-}
-
-.svg {
-  width: 20px;
-  height: 20px;
+.fill-mode label:hover {
+  cursor: pointer;
 }
 
 .run-btn {

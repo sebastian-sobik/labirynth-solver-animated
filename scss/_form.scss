@@ -13,7 +13,7 @@ input[type="radio"] {
 
     &:checked + label{
         background-color : white;
-        color: black;
+        color: #1d1d1d;
     }
   }
 
@@ -30,24 +30,12 @@ input[type="radio"] {
     padding: 1em 2.2em;
     background-color: #6C6C6C;
     color: #ACACAC;
-    }
-}
 
-.edit-mode {
-    @include absolute(5%, 50%, -50%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    label{
-        &:first-of-type{margin-right: 3rem;}
-        padding : 10px;
-        border-radius: 100%;
+    &:hover {
+        cursor: pointer;
     }
-}
 
-.svg {
-    width:20px;
-    height: 20px;
+    }
 }
 
 .run-btn {
@@ -61,7 +49,7 @@ input[type="radio"] {
     padding: 1em 3em;
 
     background-color: white;
-    transition:200ms background-color cubic-bezier(0.39, 0.575, 0.565, 1);
+    transition: 200ms background-color cubic-bezier(0.39, 0.575, 0.565, 1);
 
     &:hover {
         background-color: #ffc300;

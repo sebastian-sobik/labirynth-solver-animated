@@ -1,8 +1,8 @@
 $grid-axis-length : 500px;
 
 :root {
-    --rowNum : 5;
-    --colNum : 5;
+    --rowNum : 8;
+    --colNum : 8;
 }
 
 .grid {
@@ -27,12 +27,8 @@ $grid-axis-length : 500px;
     pointer-events:auto;
 }
 
-.start { background-color: #4B19F9;}
-.end { background-color: #6f1a3b;}
+.start { background-color: #2AD899;}
+.end { background-color: #b02e36;}
 .wall { background-color: #898989;}
-.wrong-way { background-color: #CB3971}
-.good-way { background-color: #2AD899}
-.unidentifed-way {background-color: #ffdab4e8;}
-.curr-position { background-color: #d18e4b}
 
 
