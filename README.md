@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-> This project was fully designed and solved by me.
-=======
 > This project was fully designed and solved by me.  
->>>>>>> 46a8c1081a247ab5f83d709986ba2af57c86ef9f
 As a **challenge** to me I have decided not to use other resources than my brain.
 
 ## What I have done 🎆
@@ -24,8 +20,3 @@ As a **challenge** to me I have decided not to use other resources than my brain
 
 ## Future tasks 🏆
 * optimization - I came up with an idea that algorithm can skip some paths comparing it's length to length of the path from the other side of a junction. I do not know yet how to implement it.
-<<<<<<< HEAD
-* scroll to change fill-mode and info about right click shortcut
-=======
-* scroll to change fill-mode and info about right click shortcut
->>>>>>> 46a8c1081a247ab5f83d709986ba2af57c86ef9f
