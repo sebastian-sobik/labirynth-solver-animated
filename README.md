@@ -1,8 +1,6 @@
 > This project was fully designed and solved by me.  
 As a **challenge** to me I have decided not to use other resources than my brain.
 
-<img src="./lab-gif.gif" alt="GIF" width="220" height="450">
-
 ## What I have done 🎆
 * figured out how algorithm should work + detected and solved recursive loops
 * figured out how to create intuitive interactive board
