@@ -1,5 +1,3 @@
-import { pSBC } from "./colorGrader.js";
-
 export function create2DArray(rows, cols) {
     const arr = [];
     for (let index = 0; index < rows; index++) {
@@ -26,12 +24,7 @@ export function getValFromMap({col_idx : x, row_idx : y}, map) {
 }
 
 export function setPathColor(grid_element, clr) {
-    const {backgroundColor} = grid_element.style;
-    if(backgroundColor)
-        grid_element.style.backgroundColor = pSBC(-0.2, backgroundColor);
-    else {
-        grid_element.style.backgroundColor = clr;
-    }
+    grid_element.style.backgroundColor = clr;
 }
 
 export function removeOrangePath() {
