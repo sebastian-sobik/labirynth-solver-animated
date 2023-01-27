@@ -1,15 +1,32 @@
-$grid-axis-length : 500px;
+@use "mixins" as mx;
 
-:root {
-    --rowNum : 8;
-    --colNum : 8;
+$grid-axis-length : 520px;
+
+main {
+    width:28%;
+
+    &:after {
+            content:'';
+            display: block;
+            padding-bottom: 100%;
+    }
+    padding: 0.4em;
+    position: relative;
 }
 
+:root {
+    --rowNum : 20;
+    --colNum : 20;
+}
+
+.start { background-color: #2AD899;}
+.end { background-color: #b02e36;}
+.wall { background-color: #898989;}
+
 .grid {
-    width: $grid-axis-length;
-    height: $grid-axis-length;
-    padding: 0.4em;
-    background-color: white;;
+    position: absolute;
+    @include mx.size(100%, 100%);
+    background-color: white;
     border: 1px solid black;
     border-radius: 0.3em;
 
@@ -24,11 +41,6 @@ $grid-axis-length : 500px;
 .grid-element {
     border: 1px solid rgb(197, 196, 196);
     transition: 200ms ease background-color;
-    pointer-events:auto;
+    pointer-events: auto;
 }
-
-.start { background-color: #2AD899;}
-.end { background-color: #b02e36;}
-.wall { background-color: #898989;}
-
 

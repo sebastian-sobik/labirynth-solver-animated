@@ -38,5 +38,4 @@ export function removeOrangePath() {
     document.querySelector(".grid").childNodes.forEach(element => {
         element.style = "";
     });
-
 }

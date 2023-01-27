@@ -1,6 +1,7 @@
-@use "reset";
+@use "reset.scss";
 @use "grid";
 @use "form";
+@use "mediaquery";
 
 body {
     height: 100vh;

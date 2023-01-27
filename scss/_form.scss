@@ -1,57 +1,45 @@
-@mixin absolute($top, $left, $translateX : 0, $translateY : 0) {
-    position: absolute;
-    top: $top;
-    left: $left;
-    transform: translate($translateX, $translateY);
+@use 'mixins' as mx;
+
+aside {
+    @include mx.absolute(50%,50%, -50%, -50%);
+    @include mx.size(100%, 100%, 0.4em);
+    pointer-events: none;
+    & > * {pointer-events: auto;}
 }
 
-input[type="radio"] {
-    -webkit-appearance: none;
-    appearance: none;
-    background-color: #fff;
-    margin: 0;
-
-    &:checked + label{
-        background-color : white;
-        color: #1d1d1d;
-    }
-  }
-
-
 .fill-mode {
-    @include absolute(50%, 20%, 0, -50%);
+    @include mx.absolute(50%, -160px, 0, -50%);
     display: flex;
     gap: 15px;
     flex-direction: column;
+    z-index: 100;
 
-  label {
-    display: inline-block;
-    border-radius: 1em;
-    padding: 1em 2.2em;
-    background-color: #6C6C6C;
-    color: #ACACAC;
-
-    &:hover {
-        cursor: pointer;
+    input:checked + label {
+            background-color : white;
+            color: #1d1d1d;
     }
 
+    label {
+        display: inline-block;
+        border-radius: 1em;
+        padding: 1em 2.2em;
+        background-color: #6C6C6C;
+        color: #ACACAC;
+        &:hover {cursor: pointer}
     }
 }
 
 .run-btn {
-    position: absolute;
-    bottom: 15%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 180px;
-    height: 50px;
+    @include mx.absolute(calc(100% + 20px), 50%, -50%, 0);
+    @include mx.size(180px, 50px, 1em 3em);
+    font-family: 'Poppins', sans-serif;
     border-radius: 1em;
-    padding: 1em 3em;
+    &:hover {cursor: pointer;}
+}
 
-    background-color: white;
-    transition: 200ms background-color cubic-bezier(0.39, 0.575, 0.565, 1);
-
-    &:hover {
-        background-color: #ffc300;
-    }
+.axis {
+    @include mx.absolute(-40px, 50%, -50%);
+    margin: 0 auto;
+    display: flex;
+    gap: 20px;
 }

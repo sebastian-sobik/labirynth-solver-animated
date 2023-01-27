@@ -3,12 +3,13 @@ import { Node } from "./Node.js";
 import { create2DArray, parseBlockToSymbol, getGridElement, getValFromMap, setPathColor, removeOrangePath } from "./Utilities.js";
 import * as Grid from "./Grid.js";
 
-let _NROWS = 8;
-let _NCOLS = 8;
+let _NROWS  = 20;
+let _NCOLS = 20;
 let _NBOXES = _NROWS * _NCOLS;
-let isClicking = false;
+
 let startElement = document.querySelector('.start');
 let endElement = document.querySelector('.end');
+let isClicking = false;
 let fill_mode = "wall";
 let nothingChanged = false;
 let lab;
@@ -63,7 +64,6 @@ class Labirynth {
         const {nodeMap, cursor} = stringMapToNodeMap(map);
         this.nodeMap = nodeMap;
         this.startCursor = cursor;
-        this.mapCursor = new Cursor(0,0);
     }
 
     searchPath(cursor = undefined, came_from = '', other_j_cursors = []) {
@@ -191,6 +191,7 @@ const init = () => {
     })
 
     document.querySelector(".run-btn").addEventListener("click", ()=>{
+        if(!startElement || ! endElement) return;
         if(nothingChanged) {
             removeOrangePath();
             nothingChanged = false;
@@ -208,18 +209,35 @@ const init = () => {
         displayPath(path);
         nothingChanged = true;
     })
-}
 
+    document.querySelector(".btn-wall").addEventListener("click", ()=>{
+        document.querySelector(".grid").childNodes.forEach(element => {
+            element.classList = "grid-element wall";
+            element.style = "";
+        });
+    })
+
+    document.querySelector(".btn-clear").addEventListener("click", ()=>{
+        document.querySelector(".grid").childNodes.forEach(element => {
+            element.classList = "grid-element";
+            element.style = "";
+        });
+    })
+
+    document.querySelector(".btn-random").addEventListener("click", ()=>{
+        document.querySelector(".grid").childNodes.forEach(element => {
+            element.classList = "grid-element " + ((Math.random() > 0.5) ? "wall" : "path");
+            element.style = "";
+        });
+    })
+}
 window.onload = init;
 
-
-
-
 function displayPath(path = "") {
-    const _cursor = Object.assign(Object.create(Object.getPrototypeOf(lab.startCursor)), lab.startCursor);
+    const cursor = Object.assign(Object.create(Object.getPrototypeOf(lab.startCursor)), lab.startCursor);
     for(let i = 0; i < path.length - 1; i++){
-        _cursor.move(path[i]);
-        const dom_el = getGridElement(getChildIndex(_cursor));
+        cursor.move(path[i]);
+        const dom_el = getGridElement(getChildIndex(cursor));
         setTimeout(setPathColor.bind(null, dom_el, "#fdc843"), i*150);
     }
 }
@@ -230,3 +248,4 @@ function getChildIndex(cursor) {
     if(y < 0 || y > (_NROWS-1)) return -1;
     return y * _NCOLS + x;
 }
+

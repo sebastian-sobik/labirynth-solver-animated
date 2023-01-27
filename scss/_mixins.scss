@@ -1,0 +1,12 @@
+@mixin absolute($top, $left, $translateX : 0, $translateY : 0) {
+    position: absolute;
+    top: $top;
+    left: $left;
+    transform: translate($translateX, $translateY);
+}
+
+@mixin size($width : inherit, $height : inherit, $padding: inherit) {
+    width: $width;
+    height: $height;
+    padding: $padding;
+}
