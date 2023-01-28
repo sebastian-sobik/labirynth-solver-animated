@@ -7,9 +7,9 @@ export function create2DArray(rows, cols) {
 }
 
 export function parseBlockToSymbol(block) {
-    if(block.classList.contains("start")) return 's';
-    if(block.classList.contains("end")) return 'e';
-    if(block.classList.contains("wall")) return '#';
+    if      (block.classList.contains("start")) return 's';
+    else if (block.classList.contains("end"))   return 'e';
+    else if (block.classList.contains("wall"))  return '#';
     else return '.';
 }
 

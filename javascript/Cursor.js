@@ -31,10 +31,10 @@ export class Cursor {
 
         const {col_idx : x, row_idx : y} = this;
 
-        if(direction == 'U' && (y - 1) >= 0) {return false}
-        else if(direction == 'D' && (y + 1) < this.nRows) {return false};
-        if(direction == 'L' && (x - 1) >= 0) {return false}
-        else if(direction == 'R' && (x + 1) < this.nCols) {return false};
+        if      (direction == 'U' && (y - 1) >= 0)         {return false}
+        else if (direction == 'D' && (y + 1) < this.nRows) {return false};
+        if      (direction == 'L' && (x - 1) >= 0)         {return false}
+        else if (direction == 'R' && (x + 1) < this.nCols) {return false};
 
         return true;
     }
