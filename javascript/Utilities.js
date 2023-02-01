@@ -6,10 +6,10 @@ export function create2DArray(rows, cols) {
     return arr;
 }
 
-export function parseBlockToSymbol(block) {
-    if      (block.classList.contains("start")) return 's';
-    else if (block.classList.contains("end"))   return 'e';
-    else if (block.classList.contains("wall"))  return '#';
+export function parseGridElementToSymbol(gridElement) {
+    if      (gridElement.classList.contains("start")) return 's';
+    else if (gridElement.classList.contains("end"))   return 'e';
+    else if (gridElement.classList.contains("wall"))  return '#';
     else return '.';
 }
 
@@ -31,4 +31,8 @@ export function removeOrangePath() {
     document.querySelector(".grid").childNodes.forEach(element => {
         element.style = "";
     });
+}
+
+export function makeCopy(obj) {
+    return Object.assign(Object.create(Object.getPrototypeOf(obj)), obj);
 }
