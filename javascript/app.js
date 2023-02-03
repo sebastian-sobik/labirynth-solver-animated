@@ -15,6 +15,8 @@ let nothingChanged = false;
 let labirynth;
 
 const grid = document.querySelector(".grid");
+let menuIndex = 0;
+
 
 
 function labToString() {
@@ -85,8 +87,8 @@ class Labirynth {
 
         while(1)
         {
-            // [1st statement] We are interested in best path, so we skip longer ones immediately
-            // [2nd statement] We detect infinite loops
+            // [1st] We are interested in best path, so we skip longer ones immediately
+            // [2nd] We detect infinite loops
             if(
             (++moves_counter >= min_moves && min_moves > 0)
             || this.detectInfiniteLoop(prev_junctions, global_cursor))
@@ -280,6 +282,19 @@ window.onload = () => {
             element.style = "";
         });
     })
+
+    // Changing fill-mode with by scrolling
+    document.addEventListener("wheel", (e)=>{
+        const menu = ["#wall", "#path", "#start","#end"].map( query => document.querySelector(query));
+
+        if(e.wheelDeltaY > 0 && menuIndex>0)
+            menuIndex--;
+        else if(e.wheelDeltaY <0 && menuIndex < menu.length - 1)
+            menuIndex++;
+
+        menu[menuIndex].click();
+    })
+
 }
 
 function displayPath(path = "") {
@@ -298,3 +313,5 @@ function getChildIndex(cursor) {
     if(y < 0 || y > (_NROWS-1)) return -1;
     return y * _NCOLS + x;
 }
+
+
