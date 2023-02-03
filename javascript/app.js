@@ -188,9 +188,6 @@ class Labirynth {
 window.onload = () => {
 
 
-
-
-
     ["touchstart", "mousedown"].forEach(x => grid.addEventListener(x, ()=>{  isClicking = true   }));
     ["touchend",   "mouseup"  ].forEach(x => grid.addEventListener(x, ()=>{  isClicking = false  }));
 
