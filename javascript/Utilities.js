@@ -1,3 +1,5 @@
+import {isDrawing} from "./app.js";
+
 export function create2DArray(rows, cols) {
     const arr = [];
     for (let index = 0; index < rows; index++) {
@@ -24,6 +26,7 @@ export function getValFromMap({col_idx : x, row_idx : y}, map) {
 }
 
 export function setPathColor(grid_element, clr) {
+    if(!isDrawing) return;
     grid_element.style.backgroundColor = clr;
 }
 
@@ -36,3 +39,4 @@ export function removeOrangePath() {
 export function makeCopy(obj) {
     return Object.assign(Object.create(Object.getPrototypeOf(obj)), obj);
 }
+

@@ -1,3 +1,5 @@
+import {_NCOLS, _NROWS} from "./app.js";
+
 // ==== Cursor ====
 
 export class Cursor {
@@ -40,4 +42,13 @@ export class Cursor {
     }
 
     compare(c) {return this.col_idx == c.col_idx && this.row_idx == c.row_idx;}
+}
+
+// Utils
+
+export function getChildIndex(cursor) {
+    const {col_idx : x, row_idx : y} = cursor;
+    if(x < 0 || x > (_NCOLS-1)) return -1;
+    if(y < 0 || y > (_NROWS-1)) return -1;
+    return y * _NCOLS + x;
 }

@@ -1,26 +1,34 @@
-import { Cursor } from "./Cursor.js";
+import { Cursor, getChildIndex } from "./Cursor.js";
 import { Node } from "./Node.js";
 import { create2DArray, parseGridElementToSymbol, getGridElement, getValFromMap, setPathColor, removeOrangePath, makeCopy } from "./Utilities.js";
 import * as Grid from "./Grid.js";
+import { drawStyle, clearStyle } from "./Drawing.js";
 
-let _NROWS  = 20;
-let _NCOLS = 20;
+// Settings
+export let _NROWS  = 20;
+export let _NCOLS = 20;
 let _NBOXES = _NROWS * _NCOLS;
+const DISPLAY_TIME = 50;
+export let fill_mode = "wall";
 
-let labStartElement = document.querySelector('.start');
-let labEndElement = document.querySelector('.end');
-let fill_mode = "wall";
+// GRID elements
+export let lab_obj = {
+    StartElement : document.querySelector('.start'),
+    EndElement : document.querySelector('.end')
+}
 let isClicking = false;
-let nothingChanged = false;
+export let isDrawing = false;
+
+// Algorithm
 let labirynth;
+let nothingChanged = false;
 
-const grid = document.querySelector(".grid");
+// Utilities
 let menuIndex = 0;
-
-
+const grid = document.querySelector(".grid");
 
 function labToString() {
-    if(!labStartElement || !labEndElement) return;
+    if(!lab_obj.StartElement || !lab_obj.EndElement) return;
 
     const map = create2DArray(_NROWS, _NCOLS);
     const grid_elements = grid.children;
@@ -179,48 +187,24 @@ class Labirynth {
 
 window.onload = () => {
 
-    function drawStyle(e) {
-        if(fill_mode === "start") {
-            clearStyle(labStartElement);
-            labStartElement = e;
-        }
-        else if(fill_mode === "end") {
-            clearStyle(labEndElement);
-            labEndElement = e;
-        }
-        addStyle(e, fill_mode);
-    }
-
-    function addStyle(e, className="") {
-        clearStyle(e);
-        if(className)
-            e.classList.add(className);
-    }
-
-    function clearStyle(e) {
-        if(!e) return;
-
-        if(e.classList.contains('start')) {labStartElement = null;}
-        else if(e.classList.contains('end')) {labEndElement = null;}
-
-        e.classList.remove('wall','start', 'end');
-    }
 
 
 
-    ["touchstart", "mousedown"].forEach(x => document.addEventListener(x, ()=>{  isClicking = true   }));
-    ["touchend",   "mouseup"  ].forEach(x => document.addEventListener(x, ()=>{  isClicking = false  }));
+
+    ["touchstart", "mousedown"].forEach(x => grid.addEventListener(x, ()=>{  isClicking = true   }));
+    ["touchend",   "mouseup"  ].forEach(x => grid.addEventListener(x, ()=>{  isClicking = false  }));
 
 
     // Drawing while holding left/right button
-    ["mouseover",  "mouseout" ].forEach(x => document.querySelector('.grid').addEventListener(x, e => {
+    ["mouseover",  "mouseout" ].forEach(x => grid.addEventListener(x, e => {
         if(!isClicking || fill_mode === "start" || fill_mode === "end") return;
         else drawStyle(e.target);
     }))
 
-    document.querySelector('.grid').addEventListener("mousedown", (e)=>{
+    grid.addEventListener("mousedown", (e)=>{
         if(nothingChanged) {
             nothingChanged = false;
+            isDrawing = false;
             removeOrangePath();
         }
         if(e.button === 2 || fill_mode === "path")
@@ -230,7 +214,13 @@ window.onload = () => {
     });
 
     // Prevent right click menu from showing
-    document.querySelector('.grid').addEventListener("contextmenu", e => e.preventDefault());
+    grid.addEventListener("contextmenu", e => e.preventDefault());
+
+    [".axis", ".grid"].forEach(
+        x => document.querySelector(x).addEventListener("click", ()=>{
+            isDrawing = false;
+        })
+    )
 
     // Changing fill-mode
     document.querySelector(".fill-mode").addEventListener("change", e => fill_mode = e.target.id);
@@ -246,7 +236,9 @@ window.onload = () => {
 
     // Running labirynth solver
     document.querySelector(".run-btn").addEventListener("click", ()=>{
-        if(!labStartElement || ! labEndElement) return;
+        if(!lab_obj.StartElement || ! lab_obj.EndElement) return;
+        isDrawing = false
+
         if(nothingChanged) {
             removeOrangePath();
             nothingChanged = false;
@@ -255,13 +247,13 @@ window.onload = () => {
         labirynth = new Labirynth( labToString() );
         let path = labirynth.searchPath(labirynth.startCursor);
 
-        displayPath(path);
+        if(path) displayPath(path);
         nothingChanged = true;
     })
 
     // Filling grid with walls
     document.querySelector(".btn-wall").addEventListener("click", ()=>{
-        document.querySelector(".grid").childNodes.forEach(element => {
+        grid.childNodes.forEach(element => {
             element.classList = "grid-element wall";
             element.style = "";
         });
@@ -269,7 +261,7 @@ window.onload = () => {
 
     // Clearing grid
     document.querySelector(".btn-clear").addEventListener("click", ()=>{
-        document.querySelector(".grid").childNodes.forEach(element => {
+        grid.childNodes.forEach(element => {
             element.classList = "grid-element";
             element.style = "";
         });
@@ -277,19 +269,20 @@ window.onload = () => {
 
     // Filling grid with random elements
     document.querySelector(".btn-random").addEventListener("click", ()=>{
-        document.querySelector(".grid").childNodes.forEach(element => {
+        grid.childNodes.forEach(element => {
             element.classList = "grid-element " + ((Math.random() > 0.5) ? "wall" : "path");
             element.style = "";
         });
     })
 
     // Changing fill-mode with by scrolling
-    document.addEventListener("wheel", (e)=>{
+    document.addEventListener("wheel", ({wheelDeltaY})=>{
         const menu = ["#wall", "#path", "#start","#end"].map( query => document.querySelector(query));
+        const scrolledUp = wheelDeltaY > 0;
 
-        if(e.wheelDeltaY > 0 && menuIndex>0)
+        if(scrolledUp && menuIndex > 0)
             menuIndex--;
-        else if(e.wheelDeltaY <0 && menuIndex < menu.length - 1)
+        else if(!scrolledUp && menuIndex < menu.length - 1)
             menuIndex++;
 
         menu[menuIndex].click();
@@ -299,19 +292,18 @@ window.onload = () => {
 
 function displayPath(path = "") {
     const cursor = makeCopy(labirynth.startCursor);
+    cursor.move(path[0]);
+    isDrawing = true;
+    let i = 1;
 
-    for(let i = 0; i < path.length - 1; i++){
-        cursor.move(path[i]);
-        const dom_el = getGridElement(getChildIndex(cursor));
-        setTimeout(setPathColor.bind(null, dom_el, "#fdc843"), i*100);
-    }
-}
 
-function getChildIndex(cursor) {
-    const {col_idx : x, row_idx : y} = cursor;
-    if(x < 0 || x > (_NCOLS-1)) return -1;
-    if(y < 0 || y > (_NROWS-1)) return -1;
-    return y * _NCOLS + x;
+    let s = setInterval(()=>{
+        const gridElement = getGridElement(getChildIndex(cursor));
+        setPathColor(gridElement, "#fdc843");
+        cursor.move(path[i++]);
+
+        if(i == path.length || !isDrawing) clearInterval(s);
+    }, DISPLAY_TIME)
 }
 
 
