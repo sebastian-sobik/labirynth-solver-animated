@@ -304,3 +304,12 @@ function displayPath(path = "") {
 }
 
 
+const isMobile = window.matchMedia('only screen and (max-width: 680px)').matches;
+
+if(isMobile) {
+    document.querySelector("main").remove();
+    const information = document.createElement("h1");
+    information.innerText = "Devices with width smaller than 680px are not supported";
+    information.classList.add("small-device-info")
+    document.querySelector("body").append(information);
+}

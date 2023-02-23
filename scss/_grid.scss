@@ -1,9 +1,9 @@
 @use "mixins" as mx;
-
 $grid-axis-length : 520px;
 
 main {
     width:28%;
+    min-width: 540px;
 
     &:after {
             content:'';

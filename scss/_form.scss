@@ -30,7 +30,7 @@ aside {
 }
 
 .run-btn {
-    @include mx.absolute(calc(100% + 20px), 50%, -50%, 0);
+    @include mx.absolute(calc(100% + 30px), 50%, -50%, 0);
     @include mx.size(180px, 50px, 1em 3em);
     font-family: 'Poppins', sans-serif;
     border-radius: 1em;
@@ -38,8 +38,15 @@ aside {
 }
 
 .axis {
-    @include mx.absolute(-40px, 50%, -50%);
+    @include mx.absolute(-45px, 50%, -50%);
     margin: 0 auto;
     display: flex;
     gap: 20px;
+    color: #242424;
+
+    input {
+        font-family: 'Poppins', sans-serif;
+        padding: 3px 10px;
+    }
 }
+
