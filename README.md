@@ -15,10 +15,11 @@ As a **challenge** to me I have decided not to use other resources than my brain
 * debugging - I love recursive functions :))
 
 ## What should be improved 🙄
-* rare bugs in displaying path
-* Mobile RWD - I have focused on PC, maybe designing it for mobiles will be my future challange
+* `fixed` ~~rare bugs in displaying path~~
+* ~~Mobile RWD - I have focused on PC, maybe designing it for mobiles will be my future challange~~
 
 ## Future tasks 🏆
+* code refactor
 * `completed` ~~optimization - I came up with an idea that algorithm can skip some paths comparing it's length to length of the path from the other side of a junction. I do not know yet how to implement it.~~
-* scroll to change fill-mode and info about right click shortcut
+* `completed` ~~scroll to change fill-mode and info about right click shortcut~~
 
