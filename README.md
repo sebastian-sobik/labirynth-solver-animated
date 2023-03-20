@@ -1,5 +1,5 @@
 > This project was fully designed and solved by me.  
-As a **challenge** to me I have decided not to use other resources than my brain.
+As a **challenge** I have decided not to use other resources than my brain.
 
 ## What I have done 🎆
 * figured out how algorithm should work + detected and solved recursive loops
